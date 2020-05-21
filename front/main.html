@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <title>Document</title>
+    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript">
+        $().ready(function(){
+            // 서버쪽은 크롬에서 const를 인식하지만 브라우저가 보는 파일들은 const나 let 사용시 인식 불가
+
+            //var socket = io.connect('/main');
+            var socket = io.connect('http://192.168.0.4:3000');
+
+            //참가할 방 선택
+            socket.emit('join', {roomName: 'chat'});
+
+            socket.on("receive", function (data) {
+                $("#chatMessages").append( $("<div>"+data+"</div>") );
+            });
+
+            // socket.on("chunk", function (data) {
+            //     console.log(data);
+            // });
+
+            //혹시 데이터를 object로 줄수있나?!?! 미친!!!
+            $("#button").click(function(){
+                var chat = $("#chat").val();
+                socket.emit("broadcast", {"name":"kiteak","data":chat});
+                $("#chat").val('');
+                $("#chat").focus();
+            });
+
+        });
+
+    </script>
+</head>
+<body>
+
+    <input type="text" name="chat" id="chat" placeholder="내용을 입력하세요"/>
+    <input type="button" id="button" value="send" />
+    <br/>
+    <div id="chatMessages"></div>
+
+</body>
+</html>
