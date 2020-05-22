@@ -12,7 +12,7 @@ const querystring = require('querystring');
 
 /////youtube
 
-// //Configure YoutubeMp3Downloader with your settings
+//Configure YoutubeMp3Downloader with your settings
 var YD = new YoutubeMp3Downloader({
     "ffmpegPath": ffmpegPath,        // Where is the FFmpeg binary located?
     "outputPath": "./",    // Where should the downloaded and encoded files be stored?
@@ -22,7 +22,7 @@ var YD = new YoutubeMp3Downloader({
 });
 
 
-var urlStr = 'https://www.youtube.com/watch?v=inQr-cULHkc';
+var urlStr = 'https://www.youtube.com/watch?v=2uQV_xf4oTk';
 
 var curUrl = url.parse(urlStr); //각 url 을 각 속성으로 분리
 
