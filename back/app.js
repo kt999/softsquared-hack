@@ -12,36 +12,36 @@ const querystring = require('querystring');
 
 /////youtube
 
-//Configure YoutubeMp3Downloader with your settings
-var YD = new YoutubeMp3Downloader({
-    "ffmpegPath": ffmpegPath,        // Where is the FFmpeg binary located?
-    "outputPath": "./",    // Where should the downloaded and encoded files be stored?
-    "youtubeVideoQuality": "highest",       // What video quality should be used?
-    "queueParallelism": 2,                  // How many parallel downloads/encodes should be started?
-    "progressTimeout": 2000                 // How long should be the interval of the progress reports
-});
-
-
-var urlStr = 'https://www.youtube.com/watch?v=2uQV_xf4oTk';
-
-var curUrl = url.parse(urlStr); //각 url 을 각 속성으로 분리
-
-var testQuery = querystring.parse(curUrl.query);
-
-//Download video and save as MP3 file
-YD.download(testQuery.v, "music.mp3");
-
-YD.on("finished", function(err, data) {
-    console.log("finish music!!!");
-});
-
-YD.on("error", function(error) {
-    console.log("err"+error);
-});
-
-YD.on("progress", function(progress) {
-    console.log("progress");
-});
+// //Configure YoutubeMp3Downloader with your settings
+// var YD = new YoutubeMp3Downloader({
+//     "ffmpegPath": ffmpegPath,        // Where is the FFmpeg binary located?
+//     "outputPath": "./",    // Where should the downloaded and encoded files be stored?
+//     "youtubeVideoQuality": "highest",       // What video quality should be used?
+//     "queueParallelism": 2,                  // How many parallel downloads/encodes should be started?
+//     "progressTimeout": 2000                 // How long should be the interval of the progress reports
+// });
+//
+//
+// var urlStr = 'https://www.youtube.com/watch?v=2uQV_xf4oTk';
+//
+// var curUrl = url.parse(urlStr); //각 url 을 각 속성으로 분리
+//
+// var testQuery = querystring.parse(curUrl.query);
+//
+// //Download video and save as MP3 file
+// YD.download(testQuery.v, "music.mp3");
+//
+// YD.on("finished", function(err, data) {
+//     console.log("finish music!!!");
+// });
+//
+// YD.on("error", function(error) {
+//     console.log("err"+error);
+// });
+//
+// YD.on("progress", function(progress) {
+//     console.log("progress");
+// });
 
 
 
@@ -89,29 +89,29 @@ let total = 0;
 let roomName;
 let musicChunk = new Array();
 
-// const inFile = fs.createReadStream('music.mp3',{
-//     "encoding":"base64",
-// });
-//
-// inFile.addListener('data', (data) => {
-//
-//     musicChunk.push(data);
-//
-// });
-//
-// inFile.addListener('error', (err) => {
-//
-//     console.log(err);
-//
-// });
-//
-// inFile.addListener('end', () => {
-//     console.log("finish!");
-// });
-//
-// inFile.addListener('close', function () {
-//     console.log('closed now');
-// });
+const inFile = fs.createReadStream('music.mp3',{
+    "encoding":"base64",
+});
+
+inFile.addListener('data', (data) => {
+
+    musicChunk.push(data);
+
+});
+
+inFile.addListener('error', (err) => {
+
+    console.log(err);
+
+});
+
+inFile.addListener('end', () => {
+    console.log("finish!");
+});
+
+inFile.addListener('close', function () {
+    console.log('closed now');
+});
 
 var time = 0;
 
@@ -146,31 +146,31 @@ io.sockets.on('connection', (socket) => {
     }
 
 
-    // socket.on("count", (data) => {
-    //
-    //     if(master == socket.id){
-    //
-    //         console.log("client Data" + data);
-    //
-    //         if(data > 10000){
-    //             data = data/1000;
-    //         }
-    //
-    //         time = Number(data);
-    //
-    //         console.log("time1: "+time);
-    //
-    //         test = setTimeout(function() {
-    //             console.log("time2: "+time);
-    //             // console.log(musicChunk[index]);
-    //             console.log(index);
-    //             io.sockets.emit("chunk",musicChunk[index]);
-    //             index++;
-    //         }, time-260);
-    //
-    //     }
-    //
-    // });
+    socket.on("count", (data) => {
+
+        if(master == socket.id){
+
+            console.log("client Data" + data);
+
+            if(data > 10000){
+                data = data/1000;
+            }
+
+            time = Number(data);
+
+            console.log("time1: "+time);
+
+            test = setTimeout(function() {
+                console.log("time2: "+time);
+                // console.log(musicChunk[index]);
+                console.log(index);
+                io.sockets.emit("chunk",musicChunk[index]);
+                index++;
+            }, time-260);
+
+        }
+
+    });
 
     console.log("hjihi");
 
