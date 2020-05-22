@@ -4,9 +4,50 @@ const http = require('http').Server(app);
 const fs = require('fs');
 const socketio = require('socket.io');
 
+const YoutubeMp3Downloader = require("youtube-mp3-downloader");
+const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
+
+const url = require('url');
+const querystring = require('querystring');
+
+/////youtube
+
+// //Configure YoutubeMp3Downloader with your settings
+// var YD = new YoutubeMp3Downloader({
+//     "ffmpegPath": ffmpegPath,        // Where is the FFmpeg binary located?
+//     "outputPath": "./",    // Where should the downloaded and encoded files be stored?
+//     "youtubeVideoQuality": "highest",       // What video quality should be used?
+//     "queueParallelism": 2,                  // How many parallel downloads/encodes should be started?
+//     "progressTimeout": 2000                 // How long should be the interval of the progress reports
+// });
+//
+//
+// var urlStr = 'https://www.youtube.com/watch?v=pCxCXs4Zlgc&list=RDpCxCXs4Zlgc';
+//
+// var curUrl = url.parse(urlStr); //각 url 을 각 속성으로 분리
+//
+// var testQuery = querystring.parse(curUrl.query);
+//
+// //Download video and save as MP3 file
+// YD.download(testQuery.v, "test.mp3");
+//
+// YD.on("finished", function(err, data) {
+//     console.log("finish music!!!");
+// });
+//
+// YD.on("error", function(error) {
+//     console.log("err"+error);
+// });
+//
+// YD.on("progress", function(progress) {
+//     console.log("progress");
+// });
+
+
+
 //포트설정
 let PORT = process.env.PORT;
-if(!PORT){PORT=3000;};
+if(!PORT){PORT=80;};
 
 //기타모듈
 const bodyParser = require('body-parser');
@@ -26,6 +67,11 @@ app.get('/',(req, res)=>{
     });
 });
 
+app.get('/download',(req,res)=>{
+    const music = "./music.mp3";
+    res.download(music);
+});
+
 ///////////// server routing
 
 ///////////////////
@@ -41,6 +87,41 @@ const io = socketio.listen(http);
 
 let total = 0;
 let roomName;
+let musicChunk = new Array();
+
+const inFile = fs.createReadStream('music.mp3',{
+    "encoding":"base64",
+});
+
+inFile.addListener('data', (data) => {
+
+    musicChunk.push(data);
+
+});
+
+inFile.addListener('error', (err) => {
+
+    console.log(err);
+
+});
+
+inFile.addListener('end', () => {
+    console.log("finish!");
+});
+
+inFile.addListener('close', function () {
+    console.log('closed now');
+});
+
+var time = 0;
+
+var index = 1;
+
+var master = '';
+
+var testCount = 0;
+
+var test;
 
 // on : 이벤트를 만들어라 connection은 예약어
 
@@ -51,6 +132,46 @@ io.sockets.on('connection', (socket) => {
 
     console.log("브라우저 연결 : " + socket.id);
 
+    if(testCount == 0){
+        master = socket.id;
+        testCount++;
+    }
+
+    if(master == socket.id){
+        test = setInterval(function() {
+            console.log(index);
+            io.sockets.emit("chunk",musicChunk[index]);
+            index++;
+        }, 2000);
+    }
+
+
+    // socket.on("count", (data) => {
+    //
+    //     if(master == socket.id){
+    //
+    //         console.log("client Data" + data);
+    //
+    //         if(data > 10000){
+    //             data = data/1000;
+    //         }
+    //
+    //         time = Number(data);
+    //
+    //         console.log("time1: "+time);
+    //
+    //         test = setTimeout(function() {
+    //             console.log("time2: "+time);
+    //             // console.log(musicChunk[index]);
+    //             console.log(index);
+    //             io.sockets.emit("chunk",musicChunk[index]);
+    //             index++;
+    //         }, time-260);
+    //
+    //     }
+    //
+    // });
+
     console.log("hjihi");
 
     // 참가할 방 선택 & 접속한 브라우저 객체를 특정 공간에 등록.
@@ -59,32 +180,10 @@ io.sockets.on('connection', (socket) => {
         roomName = data.roomName;
     });
 
-    // let count = 0;
-    //
-    // const inFile = fs.createReadStream('music.mp3');
-    //
-    // inFile.addListener('data', (data) => {
-    //
-    //     console.log(data);
-    //     console.log( typeof data[0]);
-    //     console.log(count++);
-    //     io.sockets.in(roomName).emit('chunk', data)
-    //
-    // });
-    //
-    // inFile.addListener('error', (err) => {
-    //
-    //     console.log(err);
-    //
-    // });
-    //
-    // inFile.addListener('end', () => {
-    //     console.log("finish!");
-    // });
-    //
-    // inFile.addListener('close', function () {
-    //     console.log('closed now');
-    // });
+
+
+    let count = 0;
+
 
     // broadcast라는 메소드 socket 통해 호출되면 매개변수로 전달된 data와 함께 적당한 로직
     socket.on("broadcast", (data) => {
@@ -100,6 +199,9 @@ io.sockets.on('connection', (socket) => {
 
     socket.on('disconnect', () => {
         console.log("브라우저 퇴장 : " + socket.id)
+        // if(master == socket.id){
+        //     clearInterval(test);
+        // }
     })
 
 });

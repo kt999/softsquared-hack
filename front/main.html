@@ -12,7 +12,7 @@
             // 서버쪽은 크롬에서 const를 인식하지만 브라우저가 보는 파일들은 const나 let 사용시 인식 불가
 
             //var socket = io.connect('/main');
-            var socket = io.connect('http://192.168.0.4:3000');
+            var socket = io.connect();
 
             //참가할 방 선택
             socket.emit('join', {roomName: 'chat'});
@@ -21,7 +21,12 @@
                 $("#chatMessages").append( $("<div>"+data+"</div>") );
             });
 
-            // socket.on("chunk", function (data) {
+            socket.on("chunk", function (data) {
+                console.log(data);
+                console.log(data.length);
+            });
+
+            // socket.on("webTest", function (data) {
             //     console.log(data);
             // });
 
