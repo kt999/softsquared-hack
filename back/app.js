@@ -50,29 +50,29 @@ let musicChunk3 = new Array();
 
 
 
-// const inFile1 = fs.createReadStream('./public/music/test1.mp3',{
-//     "encoding":"base64",
-// });
-//
-// inFile1.addListener('data', (data) => {
-//     musicChunk1.push(data);
-// });
-//
-// inFile1.addListener('end', () => {
-//     console.log("finish!");
-// });
-//
-// const inFile2 = fs.createReadStream('./public/music/test2.mp3',{
-//     "encoding":"base64",
-// });
-//
-// inFile2.addListener('data', (data) => {
-//     musicChunk2.push(data);
-// });
-//
-// inFile2.addListener('end', () => {
-//     console.log("finish!");
-// });
+const inFile1 = fs.createReadStream('./public/music/test1.mp3',{
+    "encoding":"base64",
+});
+
+inFile1.addListener('data', (data) => {
+    musicChunk1.push(data);
+});
+
+inFile1.addListener('end', () => {
+    console.log("finish!");
+});
+
+const inFile2 = fs.createReadStream('./public/music/test2.mp3',{
+    "encoding":"base64",
+});
+
+inFile2.addListener('data', (data) => {
+    musicChunk2.push(data);
+});
+
+inFile2.addListener('end', () => {
+    console.log("finish!");
+});
 //
 // const inFile3 = fs.createReadStream('./public/music/test3.mp3',{
 //     "encoding":"base64",
@@ -124,12 +124,15 @@ io.sockets.on('connection', (socket) => {
         io.sockets.emit("userList", userList);
     });
 
-    test = setTimeout(function() {
-        // console.log(musicChunk1[index]);
-        console.log(index);
-        io.sockets.emit("chunk",musicChunk1[index]);
-        index++;
-    }, 2000);
+    if(master == socket.id){
+        test = setInterval(function() {
+            // console.log(musicChunk1[index]);
+            console.log(musicChunk1[index].length);
+            io.sockets.emit("chunk",musicChunk1[index]);
+            index++;
+        }, 2000);
+    }
+
 
     // socket.on("count", (data) => {
     //
