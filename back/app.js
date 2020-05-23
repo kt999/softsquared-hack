@@ -31,15 +31,12 @@ app.use('/test',indexRouter);
 
 
 ///////////////////
+
 http.listen(PORT,()=>{
     console.log(PORT+'번 포트에서 Connected!');
 });
 
-//////// socket
-
-// 연결할 http 서버 객체 매개변수로 사용해 소켓 연결
-// src에서 이 객체를 사용한다.
-const io = socketio.listen(http);
+//music split test
 
 let total = 0;
 let roomName;
@@ -48,10 +45,8 @@ let musicChunk1 = new Array();
 let musicChunk2 = new Array();
 let musicChunk3 = new Array();
 
-
 var size1 = 0;
 var size2 = 0;
-
 
 const inFile1 = fs.createReadStream('./public/music/test1.mp3',{
     "encoding":"base64",
@@ -79,23 +74,14 @@ inFile2.addListener('end', () => {
     console.log("finish!");
 });
 
-// const inFile3 = fs.createReadStream('./public/music/test3.mp3',{
-//     "encoding":"base64",
-// });
-//
-// inFile3.addListener('data', (data) => {
-//     musicChunk3.push(data);
-// });
-//
-// inFile3.addListener('end', () => {
-//     console.log("finish!");
-// });
 
+//////// socket
 
+// 연결할 http 서버 객체 매개변수로 사용해 소켓 연결
+// src에서 이 객체를 사용한다.
+const io = socketio.listen(http);
 
 var time = 0;
-
-var size = 0;
 
 var index = 1;
 
@@ -107,6 +93,9 @@ var test;
 
 var userList = new Array();
 
+var thisSong;
+var thisSize;
+
 io.sockets.on('connection', (socket) => {
 
     console.log("브라우저 연결 : " + socket.id);
@@ -114,7 +103,11 @@ io.sockets.on('connection', (socket) => {
     if(testCount == 0){
         master = socket.id;
 
-        io.sockets.emit("chunk",musicChunk1[index]);
+        thisSong = musicChunk1;
+        thisSize = size1;
+
+        io.sockets.emit("chunk",thisSong[index]);
+        index++;
 
         testCount++;
     }
@@ -131,26 +124,6 @@ io.sockets.on('connection', (socket) => {
         io.sockets.emit("userList", userList);
 
     });
-
-
-    // if(master == socket.id){
-    //
-    //
-    //     test = setInterval(function() {
-    //         // console.log(musicChunk1[index]);
-    //
-    //         if(index < size1){
-    //             console.log(musicChunk1[index].length);
-    //             io.sockets.emit("chunk",musicChunk1[index]);
-    //             index++;
-    //         }
-    //         else{
-    //             index=1;
-    //         }
-    //     }, 2000);
-    //
-    // }
-
 
     socket.on("count", (data) => {
 
@@ -169,9 +142,9 @@ io.sockets.on('connection', (socket) => {
             test = setTimeout(function() {
                 // console.log(musicChunk1[index]);
 
-                if(index < size1-5){
-                    console.log(musicChunk1[index].length);
-                    io.sockets.emit("chunk",musicChunk1[index]);
+                if(index < thisSize-5){
+                    console.log(thisSong[index].length);
+                    io.sockets.emit("chunk",thisSong[index]);
                     index++;
                 }
 
@@ -179,8 +152,28 @@ io.sockets.on('connection', (socket) => {
                     index=1;
                 }
 
-            }, time-300);
+                console.log(time*0.0005)
 
+            }, time-(time*0.0005));
+
+        }
+
+    });
+
+    socket.on("changeSong", (data) => {
+
+        if(master == socket.id){
+
+            if(data == 1){
+                thisSong = musicChunk1;
+                thisSize = size1;
+                index = 1;
+            }
+            else if(data == 2){
+                thisSong = musicChunk2;
+                thisSize = size2;
+                index = 1;
+            }
         }
 
     });
@@ -208,12 +201,4 @@ io.sockets.on('connection', (socket) => {
 
     })
 
-});
-
-// socket.io 사용시 Http 모듈로 Express를 실행한다.
-app.get('/main', (req, res) => {
-    fs.readFile("../front/main.html", "utf-8", (err, data)=>{
-        res.type('text/html');
-        res.send(data);
-    }) ;
 });
