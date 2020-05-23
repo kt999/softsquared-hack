@@ -1,2 +1,4 @@
 /back/node_modules
 /back/music.mp3
+/back/config/database.js
+/back/public/music
