@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const http = require('http').Server(app);
+
 const fs = require('fs');
 const socketio = require('socket.io');
 
@@ -42,8 +43,10 @@ let PORT = process.env.PORT;
 if(!PORT){PORT=80;};
 
 //기타모듈
+
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended:false}));
+app.use(bodyParser.json());
 
 const cookieParser = require('cookie-parser');
 app.use(cookieParser());
