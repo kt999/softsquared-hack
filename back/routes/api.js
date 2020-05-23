@@ -1,22 +1,25 @@
 const router = require('express').Router();
 
 // import controller
-const apiController = require('../controllers/api');
+const {login} = require('../controllers/login');
+const {addPlayList, addBackGround} = require('../controllers/music');
+const {joinRoom, addRoom} = require('../controllers/room');
+
 
 // API 1
-router.post('/login',apiController.login);
+router.post('/login',login);
 
 // API 2
-router.post('/music/playList',apiController.addPlayList);
+router.post('/music/playList',addPlayList);
 
 // API 3
-router.post('/music/backGround',apiController.addBackGround);
+router.post('/music/backGround',addBackGround);
 
 // API 4
-router.get('/room',apiController.joinRoom);
+router.get('/room',joinRoom);
 
 // API 5
-router.post('/room',apiController.addRoom);
+router.post('/room',addRoom);
 
 
 module.exports = router;
