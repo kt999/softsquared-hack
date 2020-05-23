@@ -133,56 +133,63 @@ io.sockets.on('connection', (socket) => {
     });
 
 
-    if(master == socket.id){
-
-
-        test = setInterval(function() {
-            // console.log(musicChunk1[index]);
-
-            if(index < size){
-                console.log(musicChunk1[index].length);
-                io.sockets.emit("chunk",musicChunk1[index]);
-                index++;
-            }
-            else{
-                index=1;
-            }
-        }, 2000);
-
-    }
-
-
-    // socket.on("count", (data) => {
+    // if(master == socket.id){
     //
-    //     if(master == socket.id){
     //
-    //         console.log("client Data" + data);
+    //     test = setInterval(function() {
+    //         // console.log(musicChunk1[index]);
     //
-    //         if(data > 10000){
-    //             data = data/1000;
-    //         }
-    //
-    //         time = Number(data);
-    //
-    //         console.log("time1: "+time);
-    //
-    //         test = setTimeout(function() {
-    //             console.log("time2: "+time);
-    //             // console.log(musicChunk1[index]);
-    //             console.log(index);
+    //         if(index < size1){
+    //             console.log(musicChunk1[index].length);
     //             io.sockets.emit("chunk",musicChunk1[index]);
     //             index++;
-    //         }, time-260);
+    //         }
+    //         else{
+    //             index=1;
+    //         }
+    //     }, 2000);
     //
-    //     }
-    //
-    // });
+    // }
+
+
+    socket.on("count", (data) => {
+
+        if(master == socket.id){
+
+            console.log("client Data" + data);
+
+            if(data > 10000){
+                data = data/1000;
+            }
+
+            time = Number(data);
+
+            console.log("time1: "+time);
+
+            test = setTimeout(function() {
+                // console.log(musicChunk1[index]);
+
+                if(index < size1-5){
+                    console.log(musicChunk1[index].length);
+                    io.sockets.emit("chunk",musicChunk1[index]);
+                    index++;
+                }
+
+                else{
+                    index=1;
+                }
+
+            }, time-300);
+
+        }
+
+    });
 
     socket.on('chatServer', (data) => {
 
         console.log("chat data");
         console.log(data);
-        io.sockets.emit("charBrodcast", data);
+        io.sockets.emit("chatBrodcast", data);
 
     });
 
