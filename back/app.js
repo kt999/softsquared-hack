@@ -5,38 +5,6 @@ const http = require('http').Server(app);
 const fs = require('fs');
 const socketio = require('socket.io');
 
-const {YD} = require('./config/youtube');
-
-const url = require('url');
-const querystring = require('querystring');
-
-
-// const {database} = require('./config/database');
-//
-// database.connect();
-
-// var urlStr = 'https://www.youtube.com/watch?v=oC1WGmR7iY8';
-//
-// var curUrl = url.parse(urlStr); //각 url 을 각 속성으로 분리
-//
-// var testQuery = querystring.parse(curUrl.query);
-//
-// //Download video and save as MP3 file
-// YD.download(testQuery.v, "music.mp3");
-//
-// YD.on("finished", function(err, data) {
-//     console.log("finish music!!!");
-// });
-//
-// YD.on("error", function(error) {
-//     console.log("err"+error);
-// });
-//
-// YD.on("progress", function(progress) {
-//     console.log("progress");
-// });
-
-
 
 //포트설정
 let PORT = process.env.PORT;
@@ -75,31 +43,50 @@ const io = socketio.listen(http);
 
 let total = 0;
 let roomName;
-let musicChunk = new Array();
+let playList = new Array();
+let musicChunk1 = new Array();
+let musicChunk2 = new Array();
+let musicChunk3 = new Array();
 
-// const inFile = fs.createReadStream('music.mp3',{
-//     "encoding":"base64",
-// });
-//
-// inFile.addListener('data', (data) => {
-//
-//     musicChunk.push(data);
-//
-// });
-//
-// inFile.addListener('error', (err) => {
-//
-//     console.log(err);
-//
-// });
-//
-// inFile.addListener('end', () => {
-//     console.log("finish!");
-// });
-//
-// inFile.addListener('close', function () {
-//     console.log('closed now');
-// });
+
+
+const inFile1 = fs.createReadStream('./public/music/test1.mp3',{
+    "encoding":"base64",
+});
+
+inFile1.addListener('data', (data) => {
+    musicChunk1.push(data);
+});
+
+inFile1.addListener('end', () => {
+    console.log("finish!");
+});
+
+const inFile2 = fs.createReadStream('./public/music/test2.mp3',{
+    "encoding":"base64",
+});
+
+inFile2.addListener('data', (data) => {
+    musicChunk2.push(data);
+});
+
+inFile2.addListener('end', () => {
+    console.log("finish!");
+});
+
+const inFile3 = fs.createReadStream('./public/music/test3.mp3',{
+    "encoding":"base64",
+});
+
+inFile3.addListener('data', (data) => {
+    musicChunk3.push(data);
+});
+
+inFile3.addListener('end', () => {
+    console.log("finish!");
+});
+
+
 
 var time = 0;
 
@@ -111,28 +98,31 @@ var testCount = 0;
 
 var test;
 
-// on : 이벤트를 만들어라 connection은 예약어
+var userList = new Array();
 
-//io.of('/main').on ~~~~ 으로도 사용가능
 io.sockets.on('connection', (socket) => {
-
-    // 여기서 join,broadcast,receive는 임의로 프론트와 맞추면되는거임. 즉, 객체화 가능
 
     console.log("브라우저 연결 : " + socket.id);
 
     if(testCount == 0){
         master = socket.id;
+
+        io.sockets.emit("chunk",musicChunk1[index]);
+
         testCount++;
     }
 
-    if(master == socket.id){
-        test = setInterval(function() {
-            console.log(index);
-            io.sockets.emit("chunk",musicChunk[index]);
-            index++;
-        }, 2000);
-    }
+    socket.on("join",(data)=>{
 
+        var userInfo = new Object();
+
+        userInfo.nickName = data;
+        userInfo.id = socket.id;
+
+        userList.push(userInfo);
+
+        io.sockets.emit("userList", userList);
+    });
 
     socket.on("count", (data) => {
 
@@ -150,9 +140,9 @@ io.sockets.on('connection', (socket) => {
 
             test = setTimeout(function() {
                 console.log("time2: "+time);
-                // console.log(musicChunk[index]);
+                // console.log(musicChunk1[index]);
                 console.log(index);
-                io.sockets.emit("chunk",musicChunk[index]);
+                io.sockets.emit("chunk",musicChunk1[index]);
                 index++;
             }, time-260);
 
@@ -160,36 +150,18 @@ io.sockets.on('connection', (socket) => {
 
     });
 
-    console.log("hjihi");
-
-    // 참가할 방 선택 & 접속한 브라우저 객체를 특정 공간에 등록.
-    socket.on("join", (data) => {
-        socket.join(data.roomName);
-        roomName = data.roomName;
-    });
-
-
-
-    let count = 0;
-
-
-    // broadcast라는 메소드 socket 통해 호출되면 매개변수로 전달된 data와 함께 적당한 로직
-    socket.on("broadcast", (data) => {
-
-        console.log(data);
-        // chat 공간에 등록된 브라우저들에 특정 이벤트 수행
-        total = total + Number(data.data);
-        let name = data.name;
-        // io.sockets.in(roomName).emit('receive', name+':'+total);
-        io.sockets.in(roomName).emit('receive', data.data);
-
-    });
-
     socket.on('disconnect', () => {
+
+        for(var i=0; i < userList.length; i++){
+            if(userList[i]["id"]==socket.id){
+                userList.splice(i, 1);
+            }
+        }
+
+        io.sockets.emit("userList", userList);
+
         console.log("브라우저 퇴장 : " + socket.id)
-        // if(master == socket.id){
-        //     clearInterval(test);
-        // }
+
     })
 
 });

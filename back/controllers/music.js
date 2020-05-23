@@ -5,6 +5,10 @@ const {YD} = require('../config/youtube');
 const jwt = require("jsonwebtoken");
 const JWT_SECRET = require("../config/jwt");
 
+// const {database} = require('./config/database');
+//
+// database.connect();
+
 
 const addPlayList = (req, res)=>{
 
@@ -55,6 +59,8 @@ const addPlayList = (req, res)=>{
 
     YD.on("finished", function(err, data) {
         console.log("finish music!!!");
+
+        //db logic
 
         res.json({
             isSuccess:true,
