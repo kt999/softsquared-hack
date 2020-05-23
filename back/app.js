@@ -59,7 +59,7 @@ const inFile1 = fs.createReadStream('./public/music/test1.mp3',{
 
 inFile1.addListener('data', (data) => {
     musicChunk1.push(data);
-    size++;
+    size1++;
 });
 
 inFile1.addListener('end', () => {
@@ -132,21 +132,22 @@ io.sockets.on('connection', (socket) => {
 
     });
 
+
     if(master == socket.id){
 
-        if(index < size1-5){
 
-            test = setInterval(function() {
-                // console.log(musicChunk1[index]);
+        test = setInterval(function() {
+            // console.log(musicChunk1[index]);
+
+            if(index < size){
                 console.log(musicChunk1[index].length);
                 io.sockets.emit("chunk",musicChunk1[index]);
                 index++;
-            }, 2000);
-
-        }
-        else{
-            index=1;
-        }
+            }
+            else{
+                index=1;
+            }
+        }, 2000);
 
     }
 
