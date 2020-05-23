@@ -1,6 +1,5 @@
 const router = require('express').Router();
 const jwt = require("jsonwebtoken");
-
 const JWT_SECRET = "dasdsfDSFDS#@$DFSFSa";
 
 router.get('/',(req, res)=>{
