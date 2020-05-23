@@ -189,7 +189,7 @@ io.sockets.on('connection', (socket) => {
 
         console.log("chat data");
         console.log(data);
-        io.sockets.emit("chatBrodcast", data);
+        io.sockets.emit("chatBroadcast", data);
 
     });
 
