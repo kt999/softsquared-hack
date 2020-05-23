@@ -150,6 +150,12 @@ io.sockets.on('connection', (socket) => {
 
     });
 
+    socket.on('chatServer', (data) => {
+
+        io.sockets.emit("charBrodcast", data);
+
+    });
+
     socket.on('disconnect', () => {
 
         for(var i=0; i < userList.length; i++){
