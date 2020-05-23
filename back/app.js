@@ -1,28 +1,20 @@
-const express = require('express')
+const express = require('express');
 const app = express();
 const http = require('http').Server(app);
 const fs = require('fs');
 const socketio = require('socket.io');
 
-const YoutubeMp3Downloader = require("youtube-mp3-downloader");
-const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
+const {YD} = require('./config/youtube');
 
 const url = require('url');
 const querystring = require('querystring');
 
-/////youtube
 
-// //Configure YoutubeMp3Downloader with your settings
-// var YD = new YoutubeMp3Downloader({
-//     "ffmpegPath": ffmpegPath,        // Where is the FFmpeg binary located?
-//     "outputPath": "./",    // Where should the downloaded and encoded files be stored?
-//     "youtubeVideoQuality": "highest",       // What video quality should be used?
-//     "queueParallelism": 2,                  // How many parallel downloads/encodes should be started?
-//     "progressTimeout": 2000                 // How long should be the interval of the progress reports
-// });
+// const {database} = require('./config/database');
 //
-//
-// var urlStr = 'https://www.youtube.com/watch?v=2uQV_xf4oTk';
+// database.connect();
+
+// var urlStr = 'https://www.youtube.com/watch?v=oC1WGmR7iY8';
 //
 // var curUrl = url.parse(urlStr); //각 url 을 각 속성으로 분리
 //
@@ -58,21 +50,14 @@ app.use(cookieParser());
 
 app.use(express.static('../front'));
 
-///////////// front routing
+///////////// routing
 
-app.get('/',(req, res)=>{
-    fs.readFile("../front/index.html", "utf-8", (err, data)=>{
-        res.type('text/html');
-        res.send(data);
-    });
-});
+const indexRouter = require('./routes/index');
+const apiRouter = require('./routes/api');
 
-app.get('/download',(req,res)=>{
-    const music = "./music.mp3";
-    res.download(music);
-});
+app.use('/',apiRouter);
+app.use('/test',indexRouter);
 
-///////////// server routing
 
 ///////////////////
 http.listen(PORT,()=>{
@@ -89,29 +74,29 @@ let total = 0;
 let roomName;
 let musicChunk = new Array();
 
-const inFile = fs.createReadStream('music.mp3',{
-    "encoding":"base64",
-});
-
-inFile.addListener('data', (data) => {
-
-    musicChunk.push(data);
-
-});
-
-inFile.addListener('error', (err) => {
-
-    console.log(err);
-
-});
-
-inFile.addListener('end', () => {
-    console.log("finish!");
-});
-
-inFile.addListener('close', function () {
-    console.log('closed now');
-});
+// const inFile = fs.createReadStream('music.mp3',{
+//     "encoding":"base64",
+// });
+//
+// inFile.addListener('data', (data) => {
+//
+//     musicChunk.push(data);
+//
+// });
+//
+// inFile.addListener('error', (err) => {
+//
+//     console.log(err);
+//
+// });
+//
+// inFile.addListener('end', () => {
+//     console.log("finish!");
+// });
+//
+// inFile.addListener('close', function () {
+//     console.log('closed now');
+// });
 
 var time = 0;
 
