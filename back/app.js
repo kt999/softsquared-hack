@@ -49,6 +49,9 @@ let musicChunk2 = new Array();
 let musicChunk3 = new Array();
 
 
+var size1 = 0;
+var size2 = 0;
+
 
 const inFile1 = fs.createReadStream('./public/music/test1.mp3',{
     "encoding":"base64",
@@ -56,6 +59,7 @@ const inFile1 = fs.createReadStream('./public/music/test1.mp3',{
 
 inFile1.addListener('data', (data) => {
     musicChunk1.push(data);
+    size++;
 });
 
 inFile1.addListener('end', () => {
@@ -68,12 +72,13 @@ const inFile2 = fs.createReadStream('./public/music/test2.mp3',{
 
 inFile2.addListener('data', (data) => {
     musicChunk2.push(data);
+    size2++;
 });
 
 inFile2.addListener('end', () => {
     console.log("finish!");
 });
-//
+
 // const inFile3 = fs.createReadStream('./public/music/test3.mp3',{
 //     "encoding":"base64",
 // });
@@ -89,6 +94,8 @@ inFile2.addListener('end', () => {
 
 
 var time = 0;
+
+var size = 0;
 
 var index = 1;
 
@@ -122,15 +129,25 @@ io.sockets.on('connection', (socket) => {
         userList.push(userInfo);
 
         io.sockets.emit("userList", userList);
+
     });
 
     if(master == socket.id){
-        test = setInterval(function() {
-            // console.log(musicChunk1[index]);
-            console.log(musicChunk1[index].length);
-            io.sockets.emit("chunk",musicChunk1[index]);
-            index++;
-        }, 2000);
+
+        if(index < size1-5){
+
+            test = setInterval(function() {
+                // console.log(musicChunk1[index]);
+                console.log(musicChunk1[index].length);
+                io.sockets.emit("chunk",musicChunk1[index]);
+                index++;
+            }, 2000);
+
+        }
+        else{
+            index=1;
+        }
+
     }
 
 
