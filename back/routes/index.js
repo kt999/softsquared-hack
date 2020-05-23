@@ -18,7 +18,6 @@ router.get('/',(req, res)=>{
     })
 });
 
-
 router.post('/',(req, res)=>{
 
     const {token} = req.body;
