@@ -124,37 +124,47 @@ io.sockets.on('connection', (socket) => {
         io.sockets.emit("userList", userList);
     });
 
-    socket.on("count", (data) => {
+    test = setTimeout(function() {
+        // console.log(musicChunk1[index]);
+        console.log(index);
+        io.sockets.emit("chunk",musicChunk1[index]);
+        index++;
+    }, 2000);
 
-        if(master == socket.id){
-
-            console.log("client Data" + data);
-
-            if(data > 10000){
-                data = data/1000;
-            }
-
-            time = Number(data);
-
-            console.log("time1: "+time);
-
-            test = setTimeout(function() {
-                console.log("time2: "+time);
-                // console.log(musicChunk1[index]);
-                console.log(index);
-                io.sockets.emit("chunk",musicChunk1[index]);
-                index++;
-            }, time-260);
-
-        }
-
-    });
+    // socket.on("count", (data) => {
+    //
+    //     if(master == socket.id){
+    //
+    //         console.log("client Data" + data);
+    //
+    //         if(data > 10000){
+    //             data = data/1000;
+    //         }
+    //
+    //         time = Number(data);
+    //
+    //         console.log("time1: "+time);
+    //
+    //         test = setTimeout(function() {
+    //             console.log("time2: "+time);
+    //             // console.log(musicChunk1[index]);
+    //             console.log(index);
+    //             io.sockets.emit("chunk",musicChunk1[index]);
+    //             index++;
+    //         }, time-260);
+    //
+    //     }
+    //
+    // });
 
     socket.on('chatServer', (data) => {
 
+        console.log("chat data");
+        console.log(data);
         io.sockets.emit("charBrodcast", data);
 
     });
+
 
     socket.on('disconnect', () => {
 
