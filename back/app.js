@@ -50,41 +50,41 @@ let musicChunk3 = new Array();
 
 
 
-const inFile1 = fs.createReadStream('./public/music/test1.mp3',{
-    "encoding":"base64",
-});
-
-inFile1.addListener('data', (data) => {
-    musicChunk1.push(data);
-});
-
-inFile1.addListener('end', () => {
-    console.log("finish!");
-});
-
-const inFile2 = fs.createReadStream('./public/music/test2.mp3',{
-    "encoding":"base64",
-});
-
-inFile2.addListener('data', (data) => {
-    musicChunk2.push(data);
-});
-
-inFile2.addListener('end', () => {
-    console.log("finish!");
-});
-
-const inFile3 = fs.createReadStream('./public/music/test3.mp3',{
-    "encoding":"base64",
-});
-
-inFile3.addListener('data', (data) => {
-    musicChunk3.push(data);
-});
-
-inFile3.addListener('end', () => {
-    console.log("finish!");
-});
+// const inFile1 = fs.createReadStream('./public/music/test1.mp3',{
+//     "encoding":"base64",
+// });
+//
+// inFile1.addListener('data', (data) => {
+//     musicChunk1.push(data);
+// });
+//
+// inFile1.addListener('end', () => {
+//     console.log("finish!");
+// });
+//
+// const inFile2 = fs.createReadStream('./public/music/test2.mp3',{
+//     "encoding":"base64",
+// });
+//
+// inFile2.addListener('data', (data) => {
+//     musicChunk2.push(data);
+// });
+//
+// inFile2.addListener('end', () => {
+//     console.log("finish!");
+// });
+//
+// const inFile3 = fs.createReadStream('./public/music/test3.mp3',{
+//     "encoding":"base64",
+// });
+//
+// inFile3.addListener('data', (data) => {
+//     musicChunk3.push(data);
+// });
+//
+// inFile3.addListener('end', () => {
+//     console.log("finish!");
+// });
 
 
 
