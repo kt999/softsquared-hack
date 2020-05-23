@@ -85,6 +85,11 @@ socket.on('userList', 현재 접속자 리스트);
 socket.on('chunk', chunkData);
 ```
 
+- 노래 변경하기
+```javascript
+socket.on('changeSong', 노래순서 값(int));
+```
+
 - 실시간 채팅 보내기
 ```javascript
 socket.emit('chatServer', {
